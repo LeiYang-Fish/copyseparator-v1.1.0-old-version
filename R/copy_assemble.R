@@ -19,10 +19,10 @@
 #' @importFrom DECIPHER ConsensusSequence RemoveGaps
 #'
 #' @importFrom beepr beep
-#' 
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
-#' copy_assemble("inst/extdata/combined_con.fasta", 2, 1)
+#' copy_assemble("inst/extdata/combined_con.fasta",2,1)
 #' }
 #'
 #' @export copy_assemble
@@ -85,13 +85,13 @@ cluster_over <- which(lapply(1:subset_sum, function (x) length(cluster_list[[x]]
 if (verbose) { cat("*************************************************************************\n")}
 
 
-# If every subset have copy_number of clusters, no need to reduce the dataset 
+# If every subset have copy_number of clusters, no need to reduce the dataset
 if (length(cluster_equal)==subset_sum) {Consensus_seq_reduced <- Consensus_seq}
 
 # If a subset has > copy_number of clusters/consensus sequences, keep only the copy_number of different sequences
 if (length(cluster_equal)<subset_sum && copy_number<=3){
-    
- second_cp <- character(0)      
+
+ second_cp <- character(0)
  for (i in cluster_over){
   for (j in 2:length(cluster_list[[i]])){
     seqinr::write.fasta(sequences = as.list(c(stringr::str_sub(Consensus_seq[cluster_list[[i]][1]][[1]],1,-70), stringr::str_sub(Consensus_seq[cluster_list[[i]][j]][[1]],1,-70))),
@@ -140,7 +140,7 @@ if (length(cluster_equal)<subset_sum && copy_number<=3){
   for (n in 1:length(cluster_over)) {picked_3rd <- append(picked_3rd, cluster_list[cluster_over][[n]][as.numeric(third_cp[n])])}
   list_reduced <- sort(as.numeric(c(unlist(cluster_list[cluster_equal]),picked_2nd,picked_3rd)))
  }
- 
+
    Consensus_seq_reduced <- Consensus_seq[list_reduced]
    seqinr::write.fasta(sequences = Consensus_seq_reduced, names(Consensus_seq_reduced),file.out = paste0(filename_short,"_reduced.txt"))
 }
@@ -168,12 +168,12 @@ for (l in 1:copy_number) {
       seqinr::write.fasta(sequences = c(Consensus_seq_reduced[i], Consensus_seq_reduced[i+copy_number+j-l]), names(c(Consensus_seq_reduced[i], Consensus_seq_reduced[i+copy_number])),
                           file.out = paste0("cnx_",i,"_",i+copy_number+j-l,".fasta"))
       ambiguity_num <- append(ambiguity_num, ambiguity_count(paste0("cnx_",i,"_",i+copy_number+j-l,".fasta")))
-      
+
       if (verbose) { cat(paste0("Matching sequences ",i, " & ", i+copy_number+j-l, "\n"))}
     }
     if (verbose) { cat("Number of ambiguous sites for each match:", ambiguity_num, "\n")}
     if (verbose) { cat(paste0("--- The pair ", which(as.numeric(ambiguity_num)==min(as.numeric(ambiguity_num)))[1], " has fewer ambiguous sites and should be assembled together\n"))}
-    
+
     seq_to_con <- append(seq_to_con, paste0("A",i,"B_A",i+copy_number+which(as.numeric(ambiguity_num)==min(as.numeric(ambiguity_num)))[1]-l,"B"))
   }
 }
@@ -220,7 +220,7 @@ seqinr::write.fasta(sequences = all_copies_final, names(all_copies_final),file.o
 
 ## Remove shared gaps in the final gene copies
 DNAbin <- Biostrings::readDNAStringSet("All_copies_final.fasta")
-seqinr::write.fasta(sequences = lapply(1:length(DNAbin), function(x) paste0(c(as.character(DNAbin[x][[1]]), as.character(rep("-",max(width(DNAbin))-width(DNAbin)[x]))), collapse='')), 
+seqinr::write.fasta(sequences = lapply(1:length(DNAbin), function(x) paste0(c(as.character(DNAbin[x][[1]]), as.character(rep("-",max(width(DNAbin))-width(DNAbin)[x]))), collapse='')),
                     names = names(DNAbin), file.out = "All_copies_same_length_final.fasta")
 All_copies_final <- DECIPHER::RemoveGaps(Biostrings::readDNAStringSet("All_copies_same_length_final.fasta", format="fasta"),removeGaps = "common")
 Biostrings::writeXStringSet(All_copies_final, paste0(filename_short, "_assembled_", copy_number, "_gene_copies.txt"))

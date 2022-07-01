@@ -29,10 +29,10 @@
 #' @importFrom DECIPHER ConsensusSequence
 #'
 #' @importFrom beepr beep
-#' 
-#' @examples 
+#'
+#' @examples
 #' \dontrun{
-#' copy_separate("inst/extdata/toydata.fasta",2, 300, 225, 10, 1)
+#' copy_separate("inst/extdata/toydata.fasta",2,300,225,10,1)
 #' }
 #'
 #' @export copy_separate
@@ -40,7 +40,7 @@
 
 copy_separate<-function(filename,copy_number,read_length,overlap=225, rare_read=10, verbose=1)
 {
-  
+
 sink(paste0(gsub("[:.:].*","", filename), "_separate_log.txt"), append=FALSE, split=TRUE) # begin to record log
 error_log_function <- function() {
   cat(geterrmessage(), file="Error_log.txt", append=T)
@@ -82,15 +82,15 @@ Subsets <- stringr::str_sort(list.files(pattern="_downsized.fasta"), numeric = T
 
 # for each of the subset_1, 2, 3...
 for (i in 1:length(Subsets)) {
-  
+
   if (verbose) {cat("********************************************\n")}
-  
+
   if (i %in% as.numeric(empty_subset)) next # skip empty subsets
-  
+
   Sub_set <- ape::as.character.DNAbin(ape::read.FASTA(file=Subsets[i], type = "DNA"))
-  
+
   if (verbose) {cat(paste0("Clustering analyses for the Subset ", i,"\n"))}
-  
+
   # find the threshold range for OTU to find the major clusters (number=copy_number) for each subset
   for (m in seq(0.3,1, by = 0.1)) {
     Subset_OTU <- kmer::otu(Sub_set, k = 5, threshold = m, method = "central", nstart = 20)
@@ -98,31 +98,31 @@ for (i in 1:length(Subsets)) {
     if (verbose) {cat(unique(Subset_OTU),"\n")}
     if (length(unique(Subset_OTU))>=copy_number) {break}
   }
-  
+
   # try different threshold values in the range found above
-  if (length(unique(Subset_OTU))>copy_number) {                
-    for (j in seq(m-0.09,m, by = 0.01)) {                            
+  if (length(unique(Subset_OTU))>copy_number) {
+    for (j in seq(m-0.09,m, by = 0.01)) {
      Subset_OTU <- kmer::otu(Sub_set, k = 5, threshold = j, method = "central", nstart = 20)
      if (verbose) {cat(paste0("threshold = ",j),"\n")}
      if (verbose) {cat( unique(Subset_OTU),"\n")}
      if (length(unique(Subset_OTU))>=copy_number) {break}
      }
   }
- 
+
   reads_each_cluster <- sapply(unique(Subset_OTU), function(x) length(which(Subset_OTU==x)))
   cluster_DF <- cbind(as.data.frame(unique(Subset_OTU)), as.data.frame(reads_each_cluster))[order(-reads_each_cluster),]
   names(cluster_DF) <- c("cluster_num","cluster_total")
-  
+
   if (verbose) {cat("Number of reads in each cluster\n")}
   if (verbose) {cat(reads_each_cluster,"\n")}
 
  for  (l in (1:length(cluster_DF$cluster_num))){
    Picked_cluster <- Sub_set[which(Subset_OTU==cluster_DF$cluster_num[l])]
-   
+
    if (length(Picked_cluster)<rare_read) break
-   
+
    if (verbose) {cat(paste0("Number of reads in picked cluster ",l, " = ", length(Picked_cluster),"\n"))}
-   
+
    seqinr::write.fasta(sequences = Picked_cluster, names = labels(Picked_cluster), file.out = paste0("Subset_",i,"_cluster_",l,".fasta"))
    seqinr::write.fasta(sequences = paste0(c(as.character(rep("-",(read_length-overlap)*(i-1))),as.character(DECIPHER::ConsensusSequence(Biostrings::readDNAStringSet(paste0("Subset_",i,"_cluster_",l,".fasta"),
                        format="fasta",nrec=-1L, skip=0L),threshold = 0.4, ambiguity = TRUE, minInformation=0.8, noConsensusChar = "N")[1])), collapse=''),
