@@ -22,7 +22,7 @@
 #'
 #' @importFrom kmer otu
 #'
-#' @importFrom Biostrings readDNAStringSet writeXStringSet
+#' @importFrom Biostrings readDNAStringSet writeXStringSet width
 #'
 #' @importFrom ape as.character.DNAbin read.FASTA
 #'
@@ -330,7 +330,7 @@ seqinr::write.fasta(sequences = all_copies_final, names(all_copies_final),file.o
 
 ## Remove shared gaps in the final gene copies
 DNAbin <- Biostrings::readDNAStringSet("All_copies_final.fasta")
-seqinr::write.fasta(sequences = lapply(1:length(DNAbin), function(x) paste0(c(as.character(DNAbin[x][[1]]), as.character(rep("-",max(width(DNAbin))-width(DNAbin)[x]))), collapse='')),
+seqinr::write.fasta(sequences = lapply(1:length(DNAbin), function(x) paste0(c(as.character(DNAbin[x][[1]]), as.character(rep("-",max(Biostrings::width(DNAbin))-Biostrings::width(DNAbin)[x]))), collapse='')),
                     names = names(DNAbin), file.out = "All_copies_same_length_final.fasta")
 All_copies_final <- DECIPHER::RemoveGaps(Biostrings::readDNAStringSet("All_copies_same_length_final.fasta", format="fasta"),removeGaps = "common")
 Biostrings::writeXStringSet(All_copies_final, paste0(filename_short, "_assembled_", copy_number, "_gene_copies.txt"))
