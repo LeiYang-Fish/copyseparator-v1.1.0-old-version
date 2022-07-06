@@ -264,7 +264,7 @@ if (length(cluster_equal)<subset_sum && copy_number>3){
 
 
 
-# Code below will assemble copy_number of consensus sequences from each subset into copy_number of full length gene copies
+# Codes below will assemble copy_number of consensus sequences from each subset into copy_number of full length gene copies
 
 if (verbose) { cat("*************************************************************************\n")}
 
@@ -290,6 +290,7 @@ seq_to_con1 <- seq_to_con[stringr::str_order(seq_to_con, decreasing = FALSE, na_
 unlink("cnx_*") # Delete all intermediate files whose names begin with "cnx_"
 
 if (verbose) { cat("*************************************************************************\n")}
+
 # To find out which sequences belong to which gene copy
 Copy_list <- data.frame()
 for (i in 1:copy_number) {
