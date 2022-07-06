@@ -156,7 +156,7 @@ if (length(cluster_equal)<subset_sum && copy_number>3){
 
 
 
-# Code below will assemble copy_number of consensus sequences from each subset into copy_number of full length gene copies
+# Codes below will assemble copy_number of consensus sequences from each subset into copy_number of full length gene copies
 
 if (verbose) { cat("*************************************************************************\n")}
 
