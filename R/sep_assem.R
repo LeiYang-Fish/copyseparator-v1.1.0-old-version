@@ -1,4 +1,4 @@
-#' @title separate_assemble
+#' @title sep_assem
 #'
 #' @description Separates two or more gene copies from short-read Next-Generation Sequencing data into a small number of overlapping DNA sequences and assemble them into their respective gene copies.
 #'
@@ -32,13 +32,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' separate_assemble("inst/extdata/toydata.fasta",2,300,225,10,1)
+#' sep_assem("inst/extdata/toydata.fasta",2,300,225,10,1)
 #' }
 #'
-#' @export separate_assemble
+#' @export sep_assem
 #'
 
-separate_assemble<-function(filename,copy_number,read_length,overlap=225, rare_read=10, verbose=1)
+sep_assem<-function(filename,copy_number,read_length,overlap=225, rare_read=10, verbose=1)
 {
 sink(paste0(gsub("[:.:].*","", filename), "_log.txt"), append=FALSE, split=TRUE) # begin to record log
 error_log_function <- function() {
@@ -144,15 +144,13 @@ seqinr::write.fasta(sequences=All_consensus, names=Consensus_list, file.out=past
 
 
 
-
-
-
+# Runs "copy_separate" above this line, runs "copy_assemble" below this line.
 #####################################################################################################################################################################################################################
 
 # Define a function to count the total number of ambiguous sites in an alignment
 ambiguity_count <- function(x){
   sum(as.integer(stringr::str_count(as.character(DECIPHER::ConsensusSequence(Biostrings::readDNAStringSet(x, format="fasta",nrec=-1L, skip=0L),
-                                                                             threshold = 0.4,ambiguity = TRUE, minInformation=0.8, noConsensusChar = "N")), c("M", "K", "R", "Y","N","W", "S", "H", "V", "D", "B"))))
+                                                                             threshold = 0.4,ambiguity = TRUE, minInformation=0.8, noConsensusChar = "N")), c("M","K","R","Y","W","S","H","V","D","B"))))
 }
 
 Consensus_seq_org <- seqinr::read.fasta(file = paste0(filename_short,"_copies",copy_number,"_overlap",overlap,".txt"),seqtype = "DNA", as.string = TRUE,forceDNAtolower = FALSE,set.attributes = FALSE)
@@ -169,7 +167,7 @@ if (max(subset_num_org)!=subset_sum) {
 Consensus_seq_clean <- list()
 for (i in (1:length(Consensus_seq_org))){
   ambiguity_each <- sum(stringr::str_count(stringr::str_sub(Consensus_seq_org[i],-70,-1), c("M", "K", "R", "Y","N","W", "S", "H", "V", "D", "B")))
-  if (ambiguity_each<10){
+  if (ambiguity_each<8){
     Consensus_seq_clean <- append(Consensus_seq_clean, Consensus_seq_org[i])
   } else {
     Consensus_seq_clean <- append(Consensus_seq_clean, stringr::str_sub(Consensus_seq_org[i],1, -70))
@@ -314,8 +312,8 @@ for (i in 1:copy_number) {
 
 if (length(unique(seq_list))>0) {
   cat("--- Sequences involved in the assembling of multiple gene copies: ", stringr::str_sort(unique(seq_list), numeric=TRUE), "\n")
-  cat("Please check your input file carefully and run copy_assemble again or do the assembling manually!\n")
-}
+  cat(paste0("Please edit the following file carefully, then run 'copy_assemble' on it or do the assembling manually: ", paste0(filename_short,"_copies",copy_number,"_overlap",overlap,".txt"),"\n"))
+  }
 
 all_copies_final <- character(0)
 for (i in 1:copy_number) {
@@ -339,6 +337,13 @@ unlink("*_final.fasta")
 if (verbose) { cat("*************************************************************************\n")}
 cat("Run finished!\n")
 cat("Please check '*_subseqs.fasta' files to see if sequences have been linked correctly. Pay attention to nucleotide overhangs introduced by mistake.\n")
+
+# Move the input data and all intermediate and resulting files into a single newly created folder
+dir.create(paste0("--- Results_", filename_short))
+invisible(file.copy(list.files(pattern=paste0(filename_short,"_")), paste0("--- Results_", filename_short), recursive = TRUE))
+invisible(file.copy(filename, paste0("--- Results_", filename_short)))
+unlink(list.files(pattern=paste0(filename_short,"_")), recursive=TRUE)
+unlink(filename)
 
 beepr::beep(sound = 1, expr = NULL) # make a sound when run finishes
 options("error" = error_log_function)

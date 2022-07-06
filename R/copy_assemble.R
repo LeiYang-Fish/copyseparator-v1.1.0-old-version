@@ -204,7 +204,7 @@ for (i in 1:copy_number) {
 
 if (length(unique(seq_list))>0) {
   cat("--- Sequences involved in the assembling of multiple gene copies: ", stringr::str_sort(unique(seq_list), numeric=TRUE), "\n")
-  cat("Please check your input file carefully and run copy_assemble again or do the assembling manually!\n")
+  cat("Please check your input file carefully and run 'copy_assemble' again or do the assembling manually!\n")
 }
 
 all_copies_final <- character(0)
