@@ -1,7 +1,7 @@
 # Note on version
 This is the latest version - copyseparator v.1.1.0
 
-# How to install copyseparator
+# How to install copyseparator?
 install.packages("copyseparator")
   
 # Example on how to run copyseparator
@@ -18,7 +18,7 @@ Two or more. However, it works better when there is fewer (e.g. two) gene copies
 # What is the length of gene copies that copyseparator can separate?
 Theoretically, if the coverage is high and relatively even, there is no limitation on the length. In reality, however, copyseparator is usually used to separate gene copies that are several hundred to several thousand base pairs long. I have used it to successfully separate mitogenomes (~16,000 bp) of two shark species, whose reads (from gene capture, paired-end, read length 300bp) have been combined intentionally. Long-read sequencing is the better way to go for separating long gene copies.
 
-# How to generate the input data for copyseparator
+# How to generate the input data for copyseparator?
 1. PCR amplicons --- prepare libraries --- NGS short-read sequencing
 2. Target gene capture --- NGS short-read sequencing
 3. Some other ways ...
@@ -29,9 +29,10 @@ Mapping to a reference can organize the short reads in order. In this way, the s
 # Why the read-length has to be 250bp or longer?
 During assembling, short reads can easily result in chimeric sequences. Email me at leiyangslu@gmail.com if you really want to use copyseparator for NGS data with a read length < 250bp.
 
-# How to assemble gene copies if "sep_assem" or "copy_assemble" fails
+# How to assemble gene copies if "sep_assem" or "copy_assemble" fails?
 I use SeaView (http://doua.prabi.fr/software/seaview) to examine the results from "copy_separate". I prefer to assemble gene copies by moving sequences around and link gene copies by eye. It just like assembling the forward and reverse sequences from Sanger sequencing. Even if you prefer to use "copy_assemble", you still need to check the alignment first. Pay special attention to the nucleotide overhangs introduced by mistake during the calculation of consensus sequences of picked clusters.
-# How to cite copyseparator
+
+# How to cite copyseparator?
 Run the following to get the appropriate citation for the version you’re using:
 
   citation(package = "copyseparator")
