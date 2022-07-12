@@ -1,5 +1,6 @@
 # Note on version
 This is the latest version - copyseparator v.1.1.0
+A parallel version is available on request (leiyangslu@gmail.com).
 
 # How to install copyseparator?
 install.packages("copyseparator")
