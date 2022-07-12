@@ -1,4 +1,5 @@
-# This is the latest version - copyseparator v.1.1.0
+# Note
+This is the latest version - copyseparator v.1.1.0
 
 # How to install copyseparator
 install.packages("copyseparator")
