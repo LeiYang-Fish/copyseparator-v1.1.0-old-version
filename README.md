@@ -1,4 +1,4 @@
-# Note
+# Note on version
 This is the latest version - copyseparator v.1.1.0
 
 # How to install copyseparator
