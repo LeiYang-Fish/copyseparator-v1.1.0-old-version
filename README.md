@@ -1,4 +1,4 @@
-# Note on version
+# Notes on the version
 This is the latest version - v.1.1.0. 
 A parallel version is available on request (leiyangslu@gmail.com). It can process multiple samples one after another, but use multiple CPU cores for each sample.
 
